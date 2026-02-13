@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orbital Physics Simulator
+
+An interactive 3D visualization demonstrating **centripetal acceleration** in circular orbital motion.
+
+**Physics 201 Final Project - Highline College**
+
+## Core Physics
+
+This simulator demonstrates the fundamental equation:
+
+```
+a = v² / R
+```
+
+Where:
+- **a** = centripetal acceleration (m/s²)
+- **v** = tangential velocity (m/s)
+- **R** = orbital radius (m)
+
+## Features
+
+### Interactive Controls
+- **Angle (θ):** Adjust orbital position (0 to 2π radians)
+- **Velocity (v):** Control tangential velocity (1-15 m/s)
+- **Radius (R):** Modify orbital radius (5-30 m)
+- **Play/Pause:** Animate continuous orbital motion
+- **Reset:** Return to default values
+
+### Real-Time Physics Display
+- Position coordinates (x, y, z)
+- Velocity vector components
+- Centripetal acceleration magnitude
+- Acceleration vector components
+- Orbital period (T)
+- Angular velocity (ω)
+
+### 3D Visualization
+- **Particle Field Mode:** Stunning particle-based visualization
+- Glowing orbiting object (cyan)
+- Velocity vector arrow (cyan) - tangent to orbit
+- Acceleration vector arrow (magenta) - pointing to center
+- Background particle field for depth
+- Orbit path visualization
+
+### Camera Controls
+- Left-click + drag: Orbit camera
+- Right-click + drag: Pan view
+- Scroll: Zoom in/out
+- FPS counter for performance monitoring
+
+## Tech Stack
+
+- **Framework:** Next.js 14+ (React App Router)
+- **3D Engine:** Three.js with React Three Fiber
+- **3D Helpers:** @react-three/drei
+- **Styling:** Tailwind CSS
+- **Language:** TypeScript
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+orbital-sim/
+├── app/
+│   ├── page.tsx              # Main application page
+│   └── globals.css           # Global styles
+├── components/
+│   ├── Controls.tsx          # Interactive control panel
+│   ├── PhysicsPanel.tsx      # Real-time physics display
+│   └── visualizations/
+│       └── ParticleField.tsx # 3D visualization
+├── hooks/
+│   └── usePhysics.ts         # Physics state management
+└── lib/
+    └── physics.ts            # Core physics calculations
+```
 
-## Learn More
+## Physics Implementation
 
-To learn more about Next.js, take a look at the following resources:
+### Centripetal Acceleration
+```typescript
+a = v² / R
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Position (Polar to Cartesian)
+```typescript
+x = R × cos(θ)
+z = R × sin(θ)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Velocity Vector (Tangent to orbit)
+```typescript
+vₓ = -v × sin(θ)
+vᵤ = v × cos(θ)
+```
+
+### Orbital Period
+```typescript
+T = 2πR / v
+```
+
+## Performance
+
+- **Target:** 60 FPS
+- **Optimization:** Uses refs for animation (60 FPS), state for UI updates (10 FPS)
+- **Particle Count:** 2000 background particles
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy is using [Vercel](https://vercel.com):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push code to GitHub
+2. Import repository in Vercel
+3. Deploy automatically
+
+## Author
+
+Anthony - Physics 201, Highline College
