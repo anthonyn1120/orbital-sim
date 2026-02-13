@@ -21,12 +21,12 @@ interface ParticleFieldProps {
  * Subtle orbit path - thin glowing line
  */
 function OrbitPath({ radius }: { radius: number }) {
-  const points = useMemo(() => {
-    const pts = [];
+  const line = useMemo(() => {
+    const points = [];
     const segments = 128;
     for (let i = 0; i <= segments; i++) {
       const theta = (i / segments) * Math.PI * 2;
-      pts.push(
+      points.push(
         new THREE.Vector3(
           radius * Math.cos(theta),
           0,
@@ -34,23 +34,18 @@ function OrbitPath({ radius }: { radius: number }) {
         )
       );
     }
-    return pts;
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({
+      color: '#00d9ff',
+      transparent: true,
+      opacity: 0.25,
+    });
+
+    return new THREE.Line(geometry, material);
   }, [radius]);
 
-  const lineGeometry = useMemo(() => {
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, [points]);
-
-  return (
-    <line geometry={lineGeometry}>
-      <lineBasicMaterial
-        color="#00d9ff"
-        transparent
-        opacity={0.25}
-        linewidth={2}
-      />
-    </line>
-  );
+  return <primitive object={line} />;
 }
 
 /**
