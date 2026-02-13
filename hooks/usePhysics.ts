@@ -79,6 +79,19 @@ export function usePhysics() {
     return () => clearInterval(interval);
   }, [updateDisplay]);
 
+  // Properly typed setter functions
+  const handleSetTheta = useCallback((value: number) => {
+    setTheta(value);
+  }, []);
+
+  const handleSetVelocity = useCallback((value: number) => {
+    setVelocity(value);
+  }, []);
+
+  const handleSetRadius = useCallback((value: number) => {
+    setRadius(value);
+  }, []);
+
   // Control functions
   const play = useCallback(() => {
     setIsPlaying(true);
@@ -117,9 +130,9 @@ export function usePhysics() {
       velocity,
       radius,
       isPlaying,
-      setTheta,
-      setVelocity,
-      setRadius
+      setTheta: handleSetTheta,
+      setVelocity: handleSetVelocity,
+      setRadius: handleSetRadius
     },
     // Calculated physics for display
     displayValues,
