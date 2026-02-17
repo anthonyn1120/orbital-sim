@@ -30,10 +30,10 @@ export function usePhysics() {
   );
 
   // Control values for sliders (state - user input)
-  const [theta, setTheta] = useState(PHYSICS_CONSTANTS.DEFAULT_THETA);
-  const [velocity, setVelocity] = useState(PHYSICS_CONSTANTS.DEFAULT_VELOCITY);
-  const [radius, setRadius] = useState(PHYSICS_CONSTANTS.DEFAULT_RADIUS);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [theta, setTheta] = useState<number>(PHYSICS_CONSTANTS.DEFAULT_THETA);
+  const [velocity, setVelocity] = useState<number>(PHYSICS_CONSTANTS.DEFAULT_VELOCITY);
+  const [radius, setRadius] = useState<number>(PHYSICS_CONSTANTS.DEFAULT_RADIUS);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   // View mode (2D or 3D)
   const [viewMode, setViewMode] = useState<'2D' | '3D'>('3D');

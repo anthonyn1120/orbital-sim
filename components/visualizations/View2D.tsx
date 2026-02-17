@@ -27,71 +27,39 @@ function Grid2D() {
  * Angle arc showing θ from center to object
  */
 function AngleArc({ theta, radius }: { theta: number; radius: number }) {
-  const arcGeometry = useMemo(() => {
+  const arcLine = useMemo(() => {
     const points = [];
-    const arcRadius = Math.min(radius * 0.3, 3); // Arc radius (smaller of 30% or 3 units)
+    const arcRadius = Math.min(radius * 0.3, 3);
     const segments = 32;
-
     for (let i = 0; i <= segments; i++) {
       const angle = (i / segments) * theta;
-      points.push(
-        new THREE.Vector3(
-          arcRadius * Math.cos(angle),
-          0.1,
-          arcRadius * Math.sin(angle)
-        )
-      );
+      points.push(new THREE.Vector3(arcRadius * Math.cos(angle), 0.1, arcRadius * Math.sin(angle)));
     }
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: '#ffaa00', linewidth: 2 }));
+  }, [theta, radius]);
 
-    return new THREE.BufferGeometry().setFromPoints(points);
+  const refLine = useMemo(() => {
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0.1, 0),
+      new THREE.Vector3(radius, 0.1, 0),
+    ]);
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: '#666666', linewidth: 1, opacity: 0.5, transparent: true }));
+  }, [radius]);
+
+  const radialLine = useMemo(() => {
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0.1, 0),
+      new THREE.Vector3(radius * Math.cos(theta), 0.1, radius * Math.sin(theta)),
+    ]);
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: '#ffaa00', linewidth: 2, opacity: 0.7, transparent: true }));
   }, [theta, radius]);
 
   return (
     <group>
-      {/* Arc line */}
-      <line geometry={arcGeometry}>
-        <lineBasicMaterial color="#ffaa00" linewidth={2} />
-      </line>
-
-      {/* Reference line to +X axis */}
-      <line>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={2}
-            array={new Float32Array([0, 0.1, 0, radius, 0.1, 0])}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial
-          color="#666666"
-          linewidth={1}
-          opacity={0.5}
-          transparent
-        />
-      </line>
-
-      {/* Line from center to object */}
-      <line>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={2}
-            array={
-              new Float32Array([
-                0,
-                0.1,
-                0,
-                radius * Math.cos(theta),
-                0.1,
-                radius * Math.sin(theta),
-              ])
-            }
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial color="#ffaa00" linewidth={2} opacity={0.7} transparent />
-      </line>
+      <primitive object={arcLine} />
+      <primitive object={refLine} />
+      <primitive object={radialLine} />
     </group>
   );
 }
@@ -116,15 +84,12 @@ function OrbitCircle({ radius }: { radius: number }) {
     return pts;
   }, [radius]);
 
-  const lineGeometry = useMemo(() => {
-    return new THREE.BufferGeometry().setFromPoints(points);
+  const orbitLine = useMemo(() => {
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: '#00d9ff', transparent: true, opacity: 0.6, linewidth: 2 }));
   }, [points]);
 
-  return (
-    <line geometry={lineGeometry}>
-      <lineBasicMaterial color="#00d9ff" transparent opacity={0.6} linewidth={2} />
-    </line>
-  );
+  return <primitive object={orbitLine} />;
 }
 
 /**
@@ -146,24 +111,17 @@ function VectorArrow2D({
     return start.clone().add(normalizedDir.multiplyScalar(length));
   }, [start, direction, length]);
 
+  const shaftLine = useMemo(() => {
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(start.x, 0.2, start.z),
+      new THREE.Vector3(end.x, 0.2, end.z),
+    ]);
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color, linewidth: 3 }));
+  }, [start, end, color]);
+
   return (
     <group>
-      {/* Arrow shaft */}
-      <line>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={2}
-            array={
-              new Float32Array([start.x, 0.2, start.z, end.x, 0.2, end.z])
-            }
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial color={color} linewidth={3} />
-      </line>
-
-      {/* Arrowhead */}
+      <primitive object={shaftLine} />
       <mesh position={[end.x, 0.2, end.z]}>
         <coneGeometry args={[0.2, 0.5, 8]} />
         <meshBasicMaterial color={color} />
@@ -179,7 +137,7 @@ export function View2D({ refs }: View2DProps) {
   const orbitingObjectRef = useRef<THREE.Mesh>(null);
 
   // Animation loop
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!refs.isPlayingRef.current) return;
 
     const omega = refs.velocityRef.current / refs.radiusRef.current;
