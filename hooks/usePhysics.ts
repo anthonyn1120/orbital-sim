@@ -15,10 +15,10 @@ import {
  */
 export function usePhysics() {
   // Animation values (refs - no re-renders)
-  const thetaRef = useRef(PHYSICS_CONSTANTS.DEFAULT_THETA);
-  const velocityRef = useRef(PHYSICS_CONSTANTS.DEFAULT_VELOCITY);
-  const radiusRef = useRef(PHYSICS_CONSTANTS.DEFAULT_RADIUS);
-  const isPlayingRef = useRef(false);
+  const thetaRef = useRef<number>(PHYSICS_CONSTANTS.DEFAULT_THETA);
+  const velocityRef = useRef<number>(PHYSICS_CONSTANTS.DEFAULT_VELOCITY);
+  const radiusRef = useRef<number>(PHYSICS_CONSTANTS.DEFAULT_RADIUS);
+  const isPlayingRef = useRef<boolean>(false);
 
   // UI display values (state - triggers re-renders at controlled rate)
   const [displayValues, setDisplayValues] = useState<PhysicsResult>(() =>
